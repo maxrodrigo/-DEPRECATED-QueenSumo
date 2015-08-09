@@ -21,7 +21,7 @@ You’re ready!
 ## Usage
 
 ```
-queensumo [-h]() -e ENTRIES [-v]() [-s]() uri answer
+queensumo [-h] -e ENTRIES [-v] [-s]() uri answer
 ```
 
 ## Parameters
