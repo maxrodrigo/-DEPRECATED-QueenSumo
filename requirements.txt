@@ -1,0 +1,3 @@
+beautifulsoup4==4.3.2
+requests==2.7.0
+names==0.3.0
