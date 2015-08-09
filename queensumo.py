@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 # ARGUMENTS
 parser = argparse.ArgumentParser(description='KingSumo Entries Generator.',
-                                 prog="mailr")
+                                 prog="queensumo")
 
 parser.add_argument(
     'uri', help='Set the KingSumo URL. e.g. http://*****.com/giveaways/****/?lucky=[YOUR_NUMBER]')
@@ -36,10 +36,13 @@ luckyNumber = urlparse.parse_qs(parsedUri.query)['lucky'][0]
 
 mailDomains = ["hotmail.com", "gmail.com", "yahoo.com"]
 
+if args.simulate:
+    print('\033[1;35mThis is a simulation\033[1;m')
+
 print('URL:\t' + domain)
 print('Answer:\t' + args.answer)
 print('Lucky:\t' + luckyNumber)
-print('\n\033[1;35mGenerating ' + repr(args.entries) + ' entries ...\033[1;m')
+print('\n\033[1;35mGenerating ' + repr(args.entries) + ' entries ...\033[1;m\n')
 
 for x in range(0, args.entries):
 
@@ -70,7 +73,8 @@ for x in range(0, args.entries):
                'giveaways_sig': giveawaysSig
                }
 
-    # response = requests.post(args.uri, data=payload, params=querystring)
+    if not args.simulate:
+        response = requests.post(args.uri, data=payload, params=querystring)
 
     if args.verbose > 0:
         print "%s [ \033[1;36m%s\033[1;m / \033[1;32m%s\033[1;m ]" % (emailAccount,
