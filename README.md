@@ -6,22 +6,23 @@ It automatically searches for the [nonce](https://codex.wordpress.org/WordPress_
 ## Getting Started
 Clone the repository
 
-```
-git clone [https://github.com/wxrod/QueenSumo.git]()
+```sh
+git clone https://github.com/wxrod/QueenSumo.git
 ```
 
 The basic third-party dependencies are: __names__, for generating random email accounts, __requests__, for making the form POST and __BeautifulSoup__, for parsing the page and get the nonce. These libraries can be easily installed by executing. ( You may need sudo permissions)
 
-```
-pip install requirements.txt
+```sh
+cd QueenSumo
+pip install -r requirements.txt
 ```
 
 You’re ready!
 
 ## Usage
 
-```
-queensumo [-h] -e ENTRIES [-v] [-s]() uri answer
+```sh
+queensumo [-h] -e ENTRIES [-v] [-s] uri answer
 ```
 
 ## Parameters
@@ -35,7 +36,7 @@ queensumo [-h] -e ENTRIES [-v] [-s]() uri answer
 
 This generate 1 entry for sublime text giveaway
 
-```
+```sh
 ./queensumo.py -e 1 -v http://sublimetexttips.com/giveaways/win-sublime-text/?lucky=###### 'Sublime Text!!!'
 ```
 
