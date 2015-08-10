@@ -1,7 +1,14 @@
 # QueenSumo
 QueenSumo is a tool for generating KingSumo’s Giveaways entries.
-Basically it creates random emails ( name.lastname@domain.com ) using Trey Hunner’s library [names](https://github.com/treyhunner/names) and POST it to the given URL.
-It automatically searches for the [nonce](https://codex.wordpress.org/WordPress_Nonces) and generates a signature string for the registration.
+It creates a random email, searches for the [nonce](https://codex.wordpress.org/WordPress_Nonces), generates a signature string and POST those values to the given URL.
+For the emails I used Trey Hunner’s library [names](https://github.com/treyhunner/names) for the names and make a list of email templates where {space} is "." or "_" and {year} is a number between 60 and 99.
+* {firstName}{space}{lastName}@{domain}
+* {firstName}{space}{lastName}{space}{year}@{domain}
+* {firstName}{space}{year}@{domain}
+* {firstName}{year}@{domain}
+* {firstName}@{domain}
+* {firstName}{lastName}@{domain}
+* {firstName}{lastName}{year}@{domain}
 
 ## Getting Started
 Clone the repository
@@ -29,7 +36,7 @@ queensumo [-h] -e ENTRIES [-v] [-s] uri answer
 * uri KingSumo's giveaway URL
 * answer Answer to the giveaway question. Copy this from the URL
 * --entries -e Set the amount of entries you want. (required)
-* --verbose -v Print the generated email accounts with nonce and the signature
+* --verbose -v Print the generated email accounts with nonce and signature
 * --simulate -s Simulate the process without posting to the URL
 
 ## Example

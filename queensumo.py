@@ -14,7 +14,8 @@ parser = argparse.ArgumentParser(description='KingSumo Entries Generator.',
                                  prog="queensumo")
 
 parser.add_argument(
-    'uri', help='Set the KingSumo URL. e.g. http://*****.com/giveaways/****/?lucky=[YOUR_NUMBER]')
+    'uri', help='Set the KingSumo URL. e.g.' +
+                'http://*****.com/giveaways/****/?lucky=[YOUR_NUMBER]')
 
 parser.add_argument('answer', help='Question answer')
 
@@ -34,49 +35,67 @@ domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUri)
 httpReferer = '{uri.path}{uri.query}'.format(uri=parsedUri)
 luckyNumber = urlparse.parse_qs(parsedUri.query)['lucky'][0]
 
-mailDomains = ["hotmail.com", "gmail.com", "yahoo.com"]
+emailDomains = ["hotmail.com", "gmail.com", "yahoo.com"]
+emailFormats = ['{firstName}{space}{lastName}@{domain}',
+                '{firstName}{space}{lastName}{space}{year}@{domain}',
+                '{firstName}{space}{year}@{domain}',
+                '{firstName}{year}@{domain}',
+                '{firstName}@{domain}',
+                '{firstName}{lastName}@{domain}',
+                '{firstName}{lastName}{year}@{domain}']
 
 if args.simulate:
     print('\033[1;35mThis is a simulation\033[1;m')
 
-print('URL:\t' + domain)
-print('Answer:\t' + args.answer)
-print('Lucky:\t' + luckyNumber)
-print('\n\033[1;35mGenerating ' + repr(args.entries) + ' entries ...\033[1;m\n')
+print('URL:\t%s' % domain)
+print('Answer:\t%s' % args.answer)
+print('Lucky:\t%s' % luckyNumber)
+print('\n\033[1;35mGenerating %d entries ...\033[1;m\n' % args.entries)
 
 for x in range(0, args.entries):
 
-    # None
-    gRequest = requests.get(args.uri)
-    gSoup = BeautifulSoup(gRequest.text, 'html.parser')
-    giveawaysNonce = gSoup.find(id="giveaways_nonce")['value']
+    # Nonce
+    if not args.simulate:
+        gRequest = requests.get(args.uri)
+        gSoup = BeautifulSoup(gRequest.text, 'html.parser')
+        giveawaysNonce = gSoup.find(id="giveaways_nonce")['value']
 
     # Email
-    name = names.get_first_name().lower()
+    firstName = names.get_first_name().lower()
     lastName = names.get_last_name().lower()
-    userName = name + '.' + lastName
-    randomDomain = mailDomains[random.randint(0, len(mailDomains) - 1)]
-    emailAccount = userName + '@' + randomDomain
+
+    randomDomain = emailDomains[random.randint(0, len(emailDomains) - 1)]
+    randomSpace = random.choice('._')
+    randomYear = random.randint(60, 99)
+    randomEmailFormat = emailFormats[random.randint(0, len(emailFormats) - 1)]
+
+    emailAccount = randomEmailFormat.format(firstName=firstName,
+                                            lastName=lastName,
+                                            year=randomYear,
+                                            space=randomSpace,
+                                            domain=randomDomain)
 
     # Signature
-    m = md5()
-    m.update(args.answer + '|' + emailAccount)
-    giveawaysSig = m.hexdigest()
-
-    querystring = {"lucky": luckyNumber}
-
-    payload = {'giveaways_nonce': giveawaysNonce,
-               '_wp_http_referer': httpReferer,
-               'lucky': luckyNumber,
-               'giveaways_email': emailAccount,
-               'giveaways_answer': args.answer,
-               'giveaways_sig': giveawaysSig
-               }
-
     if not args.simulate:
+        m = md5()
+        m.update(args.answer + '|' + emailAccount)
+        giveawaysSig = m.hexdigest()
+
+        querystring = {"lucky": luckyNumber}
+
+        payload = {'giveaways_nonce': giveawaysNonce,
+                   '_wp_http_referer': httpReferer,
+                   'lucky': luckyNumber,
+                   'giveaways_email': emailAccount,
+                   'giveaways_answer': args.answer,
+                   'giveaways_sig': giveawaysSig
+                   }
+
         response = requests.post(args.uri, data=payload, params=querystring)
 
     if args.verbose > 0:
-        print "%s [ \033[1;36m%s\033[1;m / \033[1;32m%s\033[1;m ]" % (emailAccount,
-                                                                      giveawaysNonce,
-                                                                      giveawaysSig)
+        if not args.simulate:
+            mailOutput = '%s [ \033[1;36m%s\033[1;m / \033[1;32m%s\033[1;m ]'
+            print mailOutput % (emailAccount, giveawaysNonce, giveawaysSig)
+        else:
+            print "%s" % (emailAccount)
