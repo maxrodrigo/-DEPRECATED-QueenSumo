@@ -1,4 +1,7 @@
 # QueenSumo
+
+# @AppSumo / @joshtronic Fixed the issue.
+
 QueenSumo is a tool for generating KingSumo’s Giveaways entries.
 It creates a random email, searches for the [nonce](https://codex.wordpress.org/WordPress_Nonces), generates a signature string and POST those values to the given URL.
 For the emails I used Trey Hunner’s library [names](https://github.com/treyhunner/names) for the names and make a list of email templates where {space} is "." or "_" and {year} is a number between 60 and 99.
